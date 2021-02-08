@@ -1,15 +1,13 @@
-VERSION := 0.1.0
-
-build/libs/RandomCoords2-$(VERSION).jar: build.gradle $(shell find ./src/main -type f -print)
+build/libs/RandomCoords2-*.jar: build.gradle $(shell find ./src/main -type f -print)
 	./gradlew assemble
 	touch $@
 
 .PHONY: clean
 clean:
-	rm -f build/libs/RandomCoords2-$(VERSION).jar
+	rm -f build/libs/RandomCoords2-*.jar
 
 .PHONY: run
-run: build/libs/RandomCoords2-$(VERSION).jar
+run: build/libs/RandomCoords2-*.jar
 	cd game && java -jar server.jar nogui
 
 .PHONY: vanilla

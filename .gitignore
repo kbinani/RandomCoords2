@@ -1,10 +1,5 @@
-# Eclipse stuff
-/.classpath
-/.project
-/.settings
-/.checkstyle
 /.gradle
 /.idea
 /build
-
-/bin/
+/game
+/vanilla
