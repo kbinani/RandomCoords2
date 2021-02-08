@@ -8,10 +8,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerRegistry {
-    private final int minimumChunkOffset = 780;
+    private final int maxChunkOffset;
     private final Random random = new Random();
-
     private final ConcurrentHashMap<UUID, Point> players = new ConcurrentHashMap<>();
+
+    PlayerRegistry(int maxChunkOffset) {
+        this.maxChunkOffset = maxChunkOffset;
+    }
 
     public void clear() {
         this.players.clear();
@@ -34,8 +37,8 @@ public class PlayerRegistry {
     }
 
     private Point makeRandomChunkOffset() {
-        int x = -this.minimumChunkOffset + this.random.nextInt(2 * this.minimumChunkOffset);
-        int z = -this.minimumChunkOffset + this.random.nextInt(2 * this.minimumChunkOffset);
+        int x = -this.maxChunkOffset + this.random.nextInt(2 * this.maxChunkOffset);
+        int z = -this.maxChunkOffset + this.random.nextInt(2 * this.maxChunkOffset);
         return new Point(x, z);
     }
 }

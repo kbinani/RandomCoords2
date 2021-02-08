@@ -18,7 +18,7 @@ public class PacketModifier {
             case "POSITION_LOOK":
             case "FLYING":
             case "VEHICLE_MOVE": {
-                offsetServerBoundDoublesBlock(packet, chunkOffset, 0, 2);
+                OffsetServerBoundDoublesBlock(packet, chunkOffset, 0, 2);
                 break;
             }
             case "BLOCK_DIG":
@@ -27,7 +27,7 @@ public class PacketModifier {
             case "SET_JIGSAW":
             case "STRUCT":
             case "UPDATE_SIGN": {
-                offsetServerBoundBlockPosition(packet, chunkOffset, 0);
+                OffsetServerBoundBlockPosition(packet, chunkOffset, 0);
                 break;
             }
             case "USE_ITEM": {
@@ -54,7 +54,7 @@ public class PacketModifier {
             case "BLOCK_BREAK_ANIMATION":
             case "WORLD_EVENT":
             case "OPEN_SIGN_EDITOR": {
-                offsetClientBoundBlockPosition(packet, chunkOffset, 0);
+                OffsetClientBoundBlockPosition(packet, chunkOffset, 0);
                 break;
             }
             case "POSITION":
@@ -64,7 +64,7 @@ public class PacketModifier {
             case "SPAWN_ENTITY_EXPERIENCE_ORB":
             case "WORLD_PARTICLES":
             case "NAMED_ENTITY_SPAWN": {
-                offsetClientBoundDoublesBlock(packet, chunkOffset, 0, 2);
+                OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 2);
                 break;
             }
             case "MAP_CHUNK": {
@@ -87,15 +87,15 @@ public class PacketModifier {
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println(e);
+                    System.err.println(e.toString());
                 }
-                offsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
+                OffsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
                 break;
             }
             case "LIGHT_UPDATE":
             case "UNLOAD_CHUNK":
             case "VIEW_CENTRE": {
-                offsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
+                OffsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
                 break;
             }
             case "NAMED_SOUND_EFFECT":
@@ -110,11 +110,11 @@ public class PacketModifier {
                 break;
             }
             case "MULTI_BLOCK_CHANGE": {
-                SectionPositionModifier.modify(packet, 0, -chunkOffset.x, 0, -chunkOffset.z);
+                SectionPositionModifier.Modify(packet, 0, -chunkOffset.x, 0, -chunkOffset.z);
                 break;
             }
             case "EXPLOSION": {
-                offsetClientBoundDoublesBlock(packet, chunkOffset, 0, 2);
+                OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 2);
                 StructureModifier<List<BlockPosition>> modifier = packet.getBlockPositionCollectionModifier();
                 List<BlockPosition> original = modifier.read(0);
                 if (original.size() > 0) {
@@ -128,7 +128,7 @@ public class PacketModifier {
                 break;
             }
             case "TILE_ENTITY_DATA": {
-                offsetClientBoundBlockPosition(packet, chunkOffset, 0);
+                OffsetClientBoundBlockPosition(packet, chunkOffset, 0);
                 StructureModifier<NbtBase<?>> modifier = packet.getNbtModifier();
                 NbtBase<?> data = modifier.read(0);
                 if (data instanceof NbtCompound) {
@@ -146,7 +146,7 @@ public class PacketModifier {
             case "WORLD_BORDER": {
                 EnumWrappers.WorldBorderAction action = packet.getWorldBorderActions().read(0);
                 if (action == EnumWrappers.WorldBorderAction.INITIALIZE || action == EnumWrappers.WorldBorderAction.SET_CENTER) {
-                    offsetClientBoundDoublesBlock(packet, chunkOffset, 0, 1);
+                    OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 1);
                 }
                 break;
             }
@@ -154,14 +154,14 @@ public class PacketModifier {
 
     }
 
-    private static void offsetServerBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
+    private static void OffsetServerBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
         StructureModifier<Double> modifier = packet.getDoubles();
         if (modifier.size() <= xIndex) {
-            System.err.println("offsetServerBoundDoublesBlock: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
+            System.err.println("OffsetServerBoundDoublesBlock: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
             return;
         }
         if (modifier.size() <= zIndex) {
-            System.err.println("offsetServerBoundDoublesBlock: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
+            System.err.println("OffsetServerBoundDoublesBlock: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
             return;
         }
         double cx = modifier.read(xIndex);
@@ -170,10 +170,10 @@ public class PacketModifier {
         modifier.write(zIndex, cz + (chunkOffset.z << 4));
     }
 
-    private static void offsetServerBoundBlockPosition(PacketContainer packet, Point chunkOffset, int index) {
+    private static void OffsetServerBoundBlockPosition(PacketContainer packet, Point chunkOffset, int index) {
         StructureModifier<BlockPosition> modifier = packet.getBlockPositionModifier();
         if (modifier.size() <= index) {
-            System.err.println("offsetServerBoundBlockPosition; index out of bound. index=" + index + ", size=" + modifier.size());
+            System.err.println("OffsetServerBoundBlockPosition; index out of bound. index=" + index + ", size=" + modifier.size());
             return;
         }
         BlockPosition current = modifier.read(index);
@@ -184,10 +184,10 @@ public class PacketModifier {
         modifier.write(index, modified);
     }
 
-    private static void offsetClientBoundBlockPosition(PacketContainer packet, Point chunkOffset, int index) {
+    private static void OffsetClientBoundBlockPosition(PacketContainer packet, Point chunkOffset, int index) {
         StructureModifier<BlockPosition> modifier = packet.getBlockPositionModifier();
         if (modifier.size() <= index) {
-            System.err.println("offsetClientBoundBlockPosition; index out of bound. index=" + index + ", size=" + modifier.size());
+            System.err.println("OffsetClientBoundBlockPosition; index out of bound. index=" + index + ", size=" + modifier.size());
             return;
         }
         BlockPosition current = modifier.read(index);
@@ -198,14 +198,14 @@ public class PacketModifier {
         modifier.write(index, modified);
     }
 
-    private static void offsetClientBoundIntegersChunk(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
+    private static void OffsetClientBoundIntegersChunk(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
         StructureModifier<Integer> modifier = packet.getIntegers();
         if (modifier.size() <= xIndex) {
-            System.err.println("offsetClientBoundIntegersChunk: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
+            System.err.println("OffsetClientBoundIntegersChunk: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
             return;
         }
         if (modifier.size() <= zIndex) {
-            System.err.println("offsetClientBoundIntegersChunk: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
+            System.err.println("OffsetClientBoundIntegersChunk: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
             return;
         }
         int cx = modifier.read(xIndex);
@@ -214,14 +214,14 @@ public class PacketModifier {
         modifier.write(zIndex, cz - chunkOffset.z);
     }
 
-    private static void offsetClientBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
+    private static void OffsetClientBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
         StructureModifier<Double> modifier = packet.getDoubles();
         if (modifier.size() <= xIndex) {
-            System.err.println("offsetClientBoundDoublesBlock: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
+            System.err.println("OffsetClientBoundDoublesBlock: xIndex out of bound. xIndex=" + xIndex + ", size=" + modifier.size());
             return;
         }
         if (modifier.size() <= zIndex) {
-            System.err.println("offsetClientBoundDoublesBlock: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
+            System.err.println("OffsetClientBoundDoublesBlock: zIndex out of bound. zIndex=" + zIndex + ", size=" + modifier.size());
             return;
         }
         double cx = modifier.read(xIndex);

@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RandomCoords2 extends JavaPlugin implements Listener {
-	private final PlayerRegistry registry = new PlayerRegistry();
+	private final PlayerRegistry registry = new PlayerRegistry(780);
 
 	@Override
 	public void onDisable() {
@@ -83,7 +83,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					PacketModifier.ModifyClientBoundPacket(packet, chunkOffset);
 					event.setPacket(packet);
 				} catch (Exception e) {
-					System.err.println(e);
+					System.err.println(e.toString());
 				}
 			}
 		};
@@ -116,7 +116,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					PacketModifier.ModifyServerBoundPacket(packet, chunkOffset);
 					event.setPacket(packet);
 				} catch (Exception e) {
-					System.out.println(e);
+					System.out.println(e.toString());
 				}
 			}
 		};
