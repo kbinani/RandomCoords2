@@ -11,7 +11,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PacketModifier {
+class PacketModifier {
     public static void ModifyServerBoundPacket(PacketContainer packet, Point chunkOffset) {
         switch (packet.getType().name()) {
             case "POSITION":

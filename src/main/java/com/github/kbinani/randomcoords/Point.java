@@ -1,6 +1,6 @@
 package com.github.kbinani.randomcoords;
 
-public class Point {
+class Point {
     public final int x;
     public final int z;
 
