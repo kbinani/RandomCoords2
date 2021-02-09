@@ -7,10 +7,35 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+class PlayerOffset {
+    private final int maxChunkOffset;
+    private final ConcurrentHashMap<UUID, Point> offsets = new ConcurrentHashMap<>();
+    private static final Random random = new Random();
+
+    PlayerOffset(int maxChunkOffset) {
+        this.maxChunkOffset = maxChunkOffset;
+    }
+
+    public Point getChunkOffset(UUID worldUid, Location current) {
+        Point chunkOffset = this.offsets.get(worldUid);
+        if (chunkOffset == null) {
+            Point offset = this.makeRandomChunkOffset();
+            chunkOffset = new Point(current.getBlockX() + offset.x, current.getBlockZ() + offset.z);
+            this.offsets.put(worldUid, chunkOffset);
+        }
+        return chunkOffset;
+    }
+
+    private Point makeRandomChunkOffset() {
+        int x = -this.maxChunkOffset + random.nextInt(2 * this.maxChunkOffset);
+        int z = -this.maxChunkOffset + random.nextInt(2 * this.maxChunkOffset);
+        return new Point(x, z);
+    }
+}
+
 public class PlayerRegistry {
     private final int maxChunkOffset;
-    private final Random random = new Random();
-    private final ConcurrentHashMap<UUID, Point> players = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, PlayerOffset> players = new ConcurrentHashMap<>();
 
     PlayerRegistry(int maxChunkOffset) {
         this.maxChunkOffset = maxChunkOffset;
@@ -25,20 +50,14 @@ public class PlayerRegistry {
     }
 
     public Point getChunkOffset(Player player) {
-        UUID uuid = player.getUniqueId();
-        Point chunkOffset = this.players.get(uuid);
-        if (chunkOffset == null) {
-            Location current = player.getLocation();
-            Point offset = this.makeRandomChunkOffset();
-            chunkOffset = new Point(current.getBlockX() + offset.x, current.getBlockZ() + offset.z);
-            this.players.put(player.getUniqueId(), chunkOffset);
+        UUID playerUid = player.getUniqueId();
+        UUID worldUid = player.getWorld().getUID();
+        Location current = player.getLocation();
+        PlayerOffset offset = this.players.get(playerUid);
+        if (offset == null) {
+            offset = new PlayerOffset(this.maxChunkOffset);
+            this.players.put(playerUid, offset);
         }
-        return chunkOffset;
-    }
-
-    private Point makeRandomChunkOffset() {
-        int x = -this.maxChunkOffset + this.random.nextInt(2 * this.maxChunkOffset);
-        int z = -this.maxChunkOffset + this.random.nextInt(2 * this.maxChunkOffset);
-        return new Point(x, z);
+        return offset.getChunkOffset(worldUid, current);
     }
 }
