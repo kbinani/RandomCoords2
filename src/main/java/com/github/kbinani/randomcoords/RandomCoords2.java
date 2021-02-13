@@ -75,7 +75,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					PacketContainer original = event.getPacket();
 					PacketContainer packet;
 					if (original.getType().name().equals("LIGHT_UPDATE")) {
-						packet = original.deepClone();
+						packet = PacketModifier.ClonePacketPlayOutLightUpdate(original);
 					} else {
 						packet = original.shallowClone();
 					}

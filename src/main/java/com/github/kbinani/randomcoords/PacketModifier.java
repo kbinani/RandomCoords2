@@ -1,5 +1,6 @@
 package com.github.kbinani.randomcoords;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
@@ -8,6 +9,8 @@ import com.comphenix.protocol.wrappers.MovingObjectPositionBlock;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -152,6 +155,42 @@ class PacketModifier {
             }
         }
 
+    }
+
+    public static PacketContainer ClonePacketPlayOutLightUpdate(PacketContainer packet) {
+        try {
+            StructureModifier<Integer> integers = packet.getIntegers();
+            int a = integers.read(0);
+            int b = integers.read(1);
+            int c = integers.read(2);
+            int d = integers.read(3);
+            int e = integers.read(4);
+            int f = integers.read(5);
+            Field gField = packet.getModifier().getField(6);
+            Field hField = packet.getModifier().getField(7);
+            List<Byte> g = (List<Byte>) gField.get(packet.getHandle());
+            List<Byte> h = (List<Byte>) hField.get(packet.getHandle());
+            ArrayList<Byte> gCopy = new ArrayList<>(g);
+            ArrayList<Byte> hCopy = new ArrayList<>(h);
+            boolean i = packet.getBooleans().read(0);
+
+            PacketContainer cloned = new PacketContainer(PacketType.Play.Server.LIGHT_UPDATE);
+            StructureModifier<Integer> out = cloned.getIntegers();
+            out.write(0, a);
+            out.write(1, b);
+            out.write(2, c);
+            out.write(3, d);
+            out.write(4, e);
+            out.write(5, f);
+            cloned.getModifier().write(6, gCopy);
+            cloned.getModifier().write(7, hCopy);
+            cloned.getBooleans().write(0, i);
+
+            return cloned;
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return packet.deepClone();
     }
 
     private static void OffsetServerBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
