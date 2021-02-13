@@ -268,4 +268,29 @@ class PacketModifier {
         modifier.write(xIndex, cx - (chunkOffset.x << 4));
         modifier.write(zIndex, cz - (chunkOffset.z << 4));
     }
+
+    private static void Dump(PacketContainer packet) {
+        System.out.println("======================================");
+        System.out.println(packet.getType().name());
+        System.out.println("--------------------------------------");
+        System.out.println("    type=" + packet.getType().name());
+        System.out.println("    handle=" + packet.getHandle());
+
+        final StructureModifier<Object> modifier = packet.getModifier();
+        for (Field f : modifier.getFields()) {
+            String name = f.getName();
+            try {
+                Class<?> t = f.getType();
+                String access = "";
+                if (!f.isAccessible()) {
+                    f.setAccessible(true);
+                    access = "private ";
+                }
+                Object v = f.get(packet.getHandle());
+                System.out.println("    " + access + name + ": " + t + " = " + v);
+            } catch (Exception e) {
+                System.out.println("  " + name + ": (error); e=" + e);
+            }
+        }
+    }
 }
