@@ -166,12 +166,17 @@ class PacketModifier {
             int d = integers.read(3);
             int e = integers.read(4);
             int f = integers.read(5);
+
             Field gField = packet.getModifier().getField(6);
-            Field hField = packet.getModifier().getField(7);
+            gField.setAccessible(true);
             List<Byte> g = (List<Byte>) gField.get(packet.getHandle());
-            List<Byte> h = (List<Byte>) hField.get(packet.getHandle());
             ArrayList<Byte> gCopy = new ArrayList<>(g);
+
+            Field hField = packet.getModifier().getField(7);
+            hField.setAccessible(true);
+            List<Byte> h = (List<Byte>) hField.get(packet.getHandle());
             ArrayList<Byte> hCopy = new ArrayList<>(h);
+
             boolean i = packet.getBooleans().read(0);
 
             PacketContainer cloned = new PacketContainer(PacketType.Play.Server.LIGHT_UPDATE);
