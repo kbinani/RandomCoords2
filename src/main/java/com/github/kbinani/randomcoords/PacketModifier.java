@@ -153,8 +153,11 @@ class PacketModifier {
                 }
                 break;
             }
+            case "ENTITY_METADATA": {
+                EntityMetadataModifier.Modify(packet, chunkOffset);
+                break;
+            }
         }
-
     }
 
     public static PacketContainer ClonePacketPlayOutLightUpdate(PacketContainer packet) {
