@@ -16,4 +16,4 @@ vanilla:
 
 .PHONY: dependencyUpdates
 dependencyUpdates:
-	gradle dependencyUpdates -Drevision=release
+	./gradlew dependencyUpdates -Drevision=release
