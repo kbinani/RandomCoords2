@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
 import java.lang.reflect.Field;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -155,6 +156,11 @@ class PacketModifier {
             }
             case "ENTITY_METADATA": {
                 EntityMetadataModifier.Modify(packet, chunkOffset);
+                break;
+            }
+            case "LOGIN": {
+                SecureRandom rnd = new SecureRandom();
+                packet.getLongs().write(0, rnd.nextLong());
                 break;
             }
         }
