@@ -79,7 +79,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					if (original.getType().name().equals("LIGHT_UPDATE")) {
 						packet = PacketModifier.ClonePacketPlayOutLightUpdate(original);
 					} else {
-						packet = original.shallowClone();
+						packet = original.deepClone();
 					}
 					Point chunkOffset = registry.getChunkOffset(event.getPlayer());
 					PacketModifier.ModifyClientBoundPacket(packet, chunkOffset);

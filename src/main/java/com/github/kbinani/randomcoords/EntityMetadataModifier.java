@@ -14,11 +14,7 @@ class EntityMetadataModifier {
         StructureModifier<List<WrappedWatchableObject>> list = packet.getWatchableCollectionModifier();
         List<WrappedWatchableObject> objs = list.read(0);
         for (WrappedWatchableObject obj : objs) {
-            int idx = obj.getIndex();
             Object v = obj.getRawValue();
-            if (idx != 16) {
-                continue;
-            }
             if (!(v instanceof Optional)) {
                 continue;
             }
