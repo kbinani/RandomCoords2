@@ -25,6 +25,10 @@ class PlayerOffset {
         return chunkOffset;
     }
 
+    public void forgetWorld(UUID worldUid) {
+        this.offsets.remove(worldUid);
+    }
+
     private Point makeRandomChunkOffset() {
         int x = -this.maxChunkOffset + random.nextInt(2 * this.maxChunkOffset);
         int z = -this.maxChunkOffset + random.nextInt(2 * this.maxChunkOffset);

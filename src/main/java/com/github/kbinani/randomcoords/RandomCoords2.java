@@ -6,10 +6,14 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.injector.GamePhase;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RandomCoords2 extends JavaPlugin implements Listener {
@@ -34,6 +38,31 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		this.registry.forget(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		PlayerTeleportEvent.TeleportCause cause = event.getCause();
+		if (cause != PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) {
+			return;
+		}
+		World from = event.getFrom().getWorld();
+		World to = event.getTo().getWorld();
+		if (from.getUID().equals(to.getUID())) {
+			return;
+		}
+		this.registry.forgetWorld(event.getPlayer(), from);
+	}
+
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		Player player = event.getPlayer();
+		World from = player.getWorld();
+		World to = event.getRespawnLocation().getWorld();
+		if (from.getUID().equals(to.getUID())) {
+			return;
+		}
+		this.registry.forgetWorld(event.getPlayer(), from);
 	}
 
 	private PacketAdapter createClientBoundPacketListener() {

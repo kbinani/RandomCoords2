@@ -1,6 +1,7 @@
 package com.github.kbinani.randomcoords;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -20,6 +21,16 @@ class PlayerRegistry {
 
     public void forget(Player player) {
         this.players.remove(player.getUniqueId());
+    }
+
+    public void forgetWorld(Player player, World world) {
+        UUID playerUid = player.getUniqueId();
+        UUID worldUid = world.getUID();
+        PlayerOffset offset = this.players.get(playerUid);
+        if (offset == null) {
+            return;
+        }
+        offset.forgetWorld(worldUid);
     }
 
     public Point getChunkOffset(Player player) {
