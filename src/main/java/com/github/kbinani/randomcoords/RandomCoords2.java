@@ -85,7 +85,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					PacketModifier.ModifyClientBoundPacket(packet, chunkOffset);
 					event.setPacket(packet);
 				} catch (Exception e) {
-					System.err.println(e.toString());
+					System.err.println("[sending.\"" + event.getPlayer().getName() + "\"."  + event.getPacket().getType().name() + "]" + e.toString());
 				}
 			}
 		};
@@ -118,7 +118,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					PacketModifier.ModifyServerBoundPacket(packet, chunkOffset);
 					event.setPacket(packet);
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					System.err.println("[receiving.\"" + event.getPlayer().getName() + "\"."  + event.getPacket().getType().name() + "]" + e.toString());
 				}
 			}
 		};
