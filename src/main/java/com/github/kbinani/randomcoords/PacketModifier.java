@@ -102,8 +102,7 @@ class PacketModifier {
                 OffsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
                 break;
             }
-            case "NAMED_SOUND_EFFECT":
-            case "ENTITY_SOUND": {
+            case "NAMED_SOUND_EFFECT": {
                 int bx = chunkOffset.x << 4;
                 int bz = chunkOffset.z << 4;
                 StructureModifier<Integer> modifier = packet.getIntegers();
