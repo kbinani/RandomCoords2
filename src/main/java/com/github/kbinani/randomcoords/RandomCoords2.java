@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.injector.GamePhase;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,16 +43,43 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		PlayerTeleportEvent.TeleportCause cause = event.getCause();
-		if (cause != PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && cause != PlayerTeleportEvent.TeleportCause.END_PORTAL) {
+		Location from = event.getFrom();
+		Location to = event.getTo();
+		if (to == null) {
 			return;
 		}
-		World from = event.getFrom().getWorld();
-		World to = event.getTo().getWorld();
-		if (from.getUID().equals(to.getUID())) {
+		World fromWorld = from.getWorld();
+		World toWorld = to.getWorld();
+		if (fromWorld == null || toWorld == null) {
 			return;
 		}
-		this.registry.forgetWorld(event.getPlayer(), from);
+		Player player = event.getPlayer();
+		switch (event.getCause()) {
+			case NETHER_PORTAL:
+			case END_PORTAL: {
+				if (fromWorld.getUID().equals(toWorld.getUID())) {
+					break;
+				}
+				this.registry.forgetWorld(player, fromWorld);
+				break;
+			}
+			case PLUGIN: {
+				if (!fromWorld.getUID().equals(toWorld.getUID())) {
+					break;
+				}
+				try {
+					int viewDistance = Math.min(48, player.getClientViewDistance());
+					double blockDistance = from.distance(to);
+					double chunkDistance = blockDistance / 16.0;
+					if (chunkDistance >= viewDistance) {
+						this.registry.forgetWorld(player, fromWorld);
+					}
+				} catch (Exception e) {
+					getLogger().warning(e.getMessage());
+				}
+				break;
+			}
+		}
 	}
 
 	@EventHandler
