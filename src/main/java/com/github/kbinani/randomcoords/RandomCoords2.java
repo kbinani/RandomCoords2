@@ -140,8 +140,10 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 					} else {
 						packet = original.deepClone();
 					}
-					Point chunkOffset = registry.getChunkOffset(event.getPlayer());
-					PacketModifier.ModifyClientBoundPacket(packet, chunkOffset);
+					Player player = event.getPlayer();
+					Point chunkOffset = registry.getChunkOffset(player);
+					World world = player.getWorld();
+					PacketModifier.ModifyClientBoundPacket(packet, chunkOffset, world);
 					event.setPacket(packet);
 				} catch (Exception e) {
 					System.err.println("[sending.\"" + event.getPlayer().getName() + "\"."  + event.getPacket().getType().name() + "]" + e.toString());

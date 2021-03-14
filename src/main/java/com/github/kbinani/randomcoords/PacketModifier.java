@@ -8,10 +8,13 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MovingObjectPositionBlock;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
 
 import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +51,7 @@ class PacketModifier {
         }
     }
 
-    public static void ModifyClientBoundPacket(PacketContainer packet, Point chunkOffset) {
+    public static void ModifyClientBoundPacket(PacketContainer packet, Point chunkOffset, World world) {
         switch (packet.getType().name()) {
             case "SPAWN_POSITION":
             case "BLOCK_CHANGE":
@@ -93,6 +96,24 @@ class PacketModifier {
                 } catch (Exception e) {
                     System.err.println(e.toString());
                 }
+
+                World.Environment dimension = world.getEnvironment();
+                Biome biome;
+                switch (dimension) {
+                    case NETHER:
+                        biome = Biome.NETHER_WASTES;
+                        break;
+                    case THE_END:
+                        biome = Biome.END_MIDLANDS;
+                        break;
+                    default:
+                        biome = Biome.PLAINS;
+                        break;
+                }
+                int[] biomes = packet.getIntegerArrays().read(0);
+                Arrays.fill(biomes, biome.ordinal());
+                packet.getIntegerArrays().write(0, biomes);
+
                 OffsetClientBoundIntegersChunk(packet, chunkOffset, 0, 1);
                 break;
             }
