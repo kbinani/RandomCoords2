@@ -8,7 +8,7 @@ clean:
 
 .PHONY: run
 run: build/libs/RandomCoords2-*.jar
-	cd game && java -jar server.jar nogui
+	cd game && java --illegal-access=permit -jar server.jar nogui
 
 .PHONY: vanilla
 vanilla:
