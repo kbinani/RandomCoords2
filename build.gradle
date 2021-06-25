@@ -34,7 +34,7 @@ dependencies {
 }
 
 wrapper {
-    gradleVersion = '6.8.2'
+    gradleVersion = '7.1'
 }
 
 processResources {
