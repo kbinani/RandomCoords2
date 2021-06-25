@@ -162,7 +162,7 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 						PacketType.Play.Client.POSITION_LOOK,
 						PacketType.Play.Client.BLOCK_DIG,
 						PacketType.Play.Client.USE_ITEM,
-						PacketType.Play.Client.FLYING,
+						PacketType.Play.Client.GROUND,
 						PacketType.Play.Client.TILE_NBT_QUERY,
 						PacketType.Play.Client.VEHICLE_MOVE,
 						PacketType.Play.Client.SET_COMMAND_BLOCK,
