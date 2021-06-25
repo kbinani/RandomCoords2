@@ -23,7 +23,7 @@ class SectionPositionModifier {
             Object changed = constructor.newInstance(x + dx, y + dy, z + dz);
             packet.getModifier().write(index, changed);
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.err.println("SectionPositionModifier.Modify: " + e.getMessage());
         }
     }
 }

@@ -94,7 +94,7 @@ class PacketModifier {
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    System.err.println("ModifyClientBoundPacket(MAP_CHUNK): " + e.getMessage());
                 }
 
                 World.Environment dimension = world.getEnvironment();
@@ -222,7 +222,7 @@ class PacketModifier {
 
             return cloned;
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.err.println("ClonePacketPlayOutLightUpdate: " + e.getMessage());
         }
         return packet.deepClone();
     }
