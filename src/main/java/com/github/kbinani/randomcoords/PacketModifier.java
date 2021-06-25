@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -189,12 +190,24 @@ class PacketModifier {
     public static PacketContainer ClonePacketPlayOutLightUpdate(PacketContainer packet) {
         try {
             StructureModifier<Integer> integers = packet.getIntegers();
-            int a = integers.read(0);
-            int b = integers.read(1);
-            int c = integers.read(2);
-            int d = integers.read(3);
-            int e = integers.read(4);
-            int f = integers.read(5);
+            int chunkX = integers.read(0);
+            int chunkZ = integers.read(1);
+
+            Field cField = packet.getModifier().getField(2);
+            BitSet c = (BitSet) cField.get(packet.getHandle());
+            BitSet cCopy = BitSet.valueOf(c.toLongArray());
+
+            Field dField = packet.getModifier().getField(3);
+            BitSet d = (BitSet) dField.get(packet.getHandle());
+            BitSet dCopy = BitSet.valueOf(d.toLongArray());
+
+            Field eField = packet.getModifier().getField(4);
+            BitSet e = (BitSet) eField.get(packet.getHandle());
+            BitSet eCopy = BitSet.valueOf(e.toLongArray());
+
+            Field fField = packet.getModifier().getField(5);
+            BitSet f = (BitSet) fField.get(packet.getHandle());
+            BitSet fCopy = BitSet.valueOf(f.toLongArray());
 
             Field gField = packet.getModifier().getField(6);
             gField.setAccessible(true);
@@ -209,17 +222,15 @@ class PacketModifier {
             boolean i = packet.getBooleans().read(0);
 
             PacketContainer cloned = new PacketContainer(PacketType.Play.Server.LIGHT_UPDATE);
-            StructureModifier<Integer> out = cloned.getIntegers();
-            out.write(0, a);
-            out.write(1, b);
-            out.write(2, c);
-            out.write(3, d);
-            out.write(4, e);
-            out.write(5, f);
+            cloned.getModifier().write(0, chunkX);
+            cloned.getModifier().write(1, chunkZ);
+            cloned.getModifier().write(2, cCopy);
+            cloned.getModifier().write(3, dCopy);
+            cloned.getModifier().write(4, eCopy);
+            cloned.getModifier().write(5, fCopy);
             cloned.getModifier().write(6, gCopy);
             cloned.getModifier().write(7, hCopy);
             cloned.getBooleans().write(0, i);
-
             return cloned;
         } catch (Exception e) {
             System.err.println("ClonePacketPlayOutLightUpdate: " + e.getMessage());
