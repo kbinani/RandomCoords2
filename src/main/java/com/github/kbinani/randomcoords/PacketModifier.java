@@ -78,7 +78,8 @@ class PacketModifier {
             case "SPAWN_ENTITY_LIVING":
             case "SPAWN_ENTITY_EXPERIENCE_ORB":
             case "WORLD_PARTICLES":
-            case "NAMED_ENTITY_SPAWN": {
+            case "NAMED_ENTITY_SPAWN":
+            case "VEHICLE_MOVE": {
                 OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 2);
                 break;
             }
