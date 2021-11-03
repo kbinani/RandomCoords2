@@ -17,18 +17,14 @@ repositories {
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
     maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    maven {
-        url = 'https://jitpack.io/'
+        url "https://repo.dmulloy2.net/repository/public/"
     }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
-    compileOnly 'org.jetbrains:annotations:20.1.0'
-    compileOnly 'com.github.dmulloy2:ProtocolLib:master-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
 }
 
 wrapper {
