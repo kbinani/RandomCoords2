@@ -87,10 +87,10 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 		Player player = event.getPlayer();
 		World from = player.getWorld();
 		World to = event.getRespawnLocation().getWorld();
-		if (from.getUID().equals(to.getUID())) {
+		if (to != null && from.getUID().equals(to.getUID())) {
 			return;
 		}
-		this.registry.forgetWorld(event.getPlayer(), from);
+		this.registry.forgetWorld(player, from);
 	}
 
 	private PacketAdapter createClientBoundPacketListener() {
