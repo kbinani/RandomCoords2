@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.security.SecureRandom;
@@ -40,12 +41,18 @@ class PacketModifier {
             }
             case "USE_ITEM": {
                 MovingObjectPositionBlock current = packet.getMovingBlockPositions().read(0);
+
+                int dx = chunkOffset.x << 4;
+                int dz = chunkOffset.z << 4;
+
                 BlockPosition blockPosition = current.getBlockPosition();
-                BlockPosition changed = new BlockPosition(
-                        blockPosition.getX() + (chunkOffset.x << 4),
-                        blockPosition.getY(),
-                        blockPosition.getZ() + (chunkOffset.z << 4));
-                current.setBlockPosition(changed);
+                BlockPosition changedBlockPosition = new BlockPosition(blockPosition.getX() + dx, blockPosition.getY(), blockPosition.getZ() + dz);
+                current.setBlockPosition(changedBlockPosition);
+
+                Vector posVector = current.getPosVector();
+                Vector changedPosVector = new Vector(posVector.getX() + dx, posVector.getY(), posVector.getZ() + dz);
+                current.setPosVector(changedPosVector);
+
                 packet.getMovingBlockPositions().write(0, current);
                 break;
             }
