@@ -122,7 +122,8 @@ public class RandomCoords2 extends JavaPlugin implements Listener {
 						PacketType.Play.Server.WORLD_EVENT,
 						PacketType.Play.Server.TILE_ENTITY_DATA,
 						PacketType.Play.Server.OPEN_SIGN_EDITOR,
-						PacketType.Play.Server.WORLD_BORDER,
+						PacketType.Play.Server.INITIALIZE_BORDER,
+						PacketType.Play.Server.SET_BORDER_CENTER,
 						PacketType.Play.Server.ENTITY_METADATA,
 						PacketType.Play.Server.LOGIN);
 		final PlayerRegistry registry = this.registry;

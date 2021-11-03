@@ -175,13 +175,6 @@ class PacketModifier {
                 }
                 break;
             }
-            case "WORLD_BORDER": {
-                EnumWrappers.WorldBorderAction action = packet.getWorldBorderActions().read(0);
-                if (action == EnumWrappers.WorldBorderAction.INITIALIZE || action == EnumWrappers.WorldBorderAction.SET_CENTER) {
-                    OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 1);
-                }
-                break;
-            }
             case "ENTITY_METADATA": {
                 EntityMetadataModifier.Modify(packet, chunkOffset);
                 break;
@@ -189,6 +182,11 @@ class PacketModifier {
             case "LOGIN": {
                 SecureRandom rnd = new SecureRandom();
                 packet.getLongs().write(0, rnd.nextLong());
+                break;
+            }
+            case "INITIALIZE_BORDER":
+            case "SET_BORDER_CENTER": {
+                OffsetClientBoundDoublesBlock(packet, chunkOffset, 0, 1);
                 break;
             }
         }
