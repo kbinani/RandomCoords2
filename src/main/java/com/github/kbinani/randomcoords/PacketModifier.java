@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MovingObjectPositionBlock;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 class PacketModifier {
@@ -193,55 +193,75 @@ class PacketModifier {
         }
     }
 
-    public static PacketContainer ClonePacketPlayOutLightUpdate(PacketContainer packet) {
+    private static void UseField(Field field, Object object, Consumer<Object> action) {
         try {
-            StructureModifier<Integer> integers = packet.getIntegers();
-            int chunkX = integers.read(0);
-            int chunkZ = integers.read(1);
-
-            Field cField = packet.getModifier().getField(2);
-            BitSet c = (BitSet) cField.get(packet.getHandle());
-            BitSet cCopy = BitSet.valueOf(c.toLongArray());
-
-            Field dField = packet.getModifier().getField(3);
-            BitSet d = (BitSet) dField.get(packet.getHandle());
-            BitSet dCopy = BitSet.valueOf(d.toLongArray());
-
-            Field eField = packet.getModifier().getField(4);
-            BitSet e = (BitSet) eField.get(packet.getHandle());
-            BitSet eCopy = BitSet.valueOf(e.toLongArray());
-
-            Field fField = packet.getModifier().getField(5);
-            BitSet f = (BitSet) fField.get(packet.getHandle());
-            BitSet fCopy = BitSet.valueOf(f.toLongArray());
-
-            Field gField = packet.getModifier().getField(6);
-            gField.setAccessible(true);
-            List<Byte> g = (List<Byte>) gField.get(packet.getHandle());
-            ArrayList<Byte> gCopy = new ArrayList<>(g);
-
-            Field hField = packet.getModifier().getField(7);
-            hField.setAccessible(true);
-            List<Byte> h = (List<Byte>) hField.get(packet.getHandle());
-            ArrayList<Byte> hCopy = new ArrayList<>(h);
-
-            boolean i = packet.getBooleans().read(0);
-
-            PacketContainer cloned = new PacketContainer(PacketType.Play.Server.LIGHT_UPDATE);
-            cloned.getModifier().write(0, chunkX);
-            cloned.getModifier().write(1, chunkZ);
-            cloned.getModifier().write(2, cCopy);
-            cloned.getModifier().write(3, dCopy);
-            cloned.getModifier().write(4, eCopy);
-            cloned.getModifier().write(5, fCopy);
-            cloned.getModifier().write(6, gCopy);
-            cloned.getModifier().write(7, hCopy);
-            cloned.getBooleans().write(0, i);
-            return cloned;
+            field.setAccessible(true);
+            Object obj = field.get(object);
+            action.accept(obj);
         } catch (Exception e) {
-            System.err.println("ClonePacketPlayOutLightUpdate: " + e.getMessage());
+            System.err.println("UseField: " + e.getMessage());
+            e.printStackTrace();
         }
-        return packet.deepClone();
+    }
+
+    public static PacketContainer ClonePacketPlayOutLightUpdate(PacketContainer packet) {
+        Object handle = packet.getHandle();
+
+        PacketContainer cloned = new PacketContainer(PacketType.Play.Server.LIGHT_UPDATE);
+
+        StructureModifier<Integer> integers = packet.getIntegers();
+        int chunkX = integers.read(0);
+        cloned.getModifier().write(0, chunkX);
+
+        int chunkZ = integers.read(1);
+        cloned.getModifier().write(1, chunkZ);
+
+        Field cField = packet.getModifier().getField(2);
+        UseField(cField, handle, (obj) -> {
+            BitSet c = (BitSet) obj;
+            BitSet cCopy = BitSet.valueOf(c.toLongArray());
+            cloned.getModifier().write(2, cCopy);
+        });
+
+        Field dField = packet.getModifier().getField(3);
+        UseField(dField, handle, (obj) -> {
+            BitSet d = (BitSet) obj;
+            BitSet dCopy = BitSet.valueOf(d.toLongArray());
+            cloned.getModifier().write(3, dCopy);
+        });
+
+        Field eField = packet.getModifier().getField(4);
+        UseField(eField, handle, (obj) -> {
+            BitSet e = (BitSet) obj;
+            BitSet eCopy = BitSet.valueOf(e.toLongArray());
+            cloned.getModifier().write(4, eCopy);
+        });
+
+        Field fField = packet.getModifier().getField(5);
+        UseField(fField, handle, (obj) -> {
+            BitSet f = (BitSet) obj;
+            BitSet fCopy = BitSet.valueOf(f.toLongArray());
+            cloned.getModifier().write(5, fCopy);
+        });
+
+        Field gField = packet.getModifier().getField(6);
+        UseField(gField, handle, (obj) -> {
+            List<Byte> g = (List<Byte>) obj;
+            ArrayList<Byte> gCopy = new ArrayList<>(g);
+            cloned.getModifier().write(6, gCopy);
+        });
+
+        Field hField = packet.getModifier().getField(7);
+        UseField(hField, handle, (obj) -> {
+            List<Byte> h = (List<Byte>) obj;
+            ArrayList<Byte> hCopy = new ArrayList<>(h);
+            cloned.getModifier().write(7, hCopy);
+        });
+
+        boolean i = packet.getBooleans().read(0);
+        cloned.getBooleans().write(0, i);
+
+        return cloned;
     }
 
     private static void OffsetServerBoundDoublesBlock(PacketContainer packet, Point chunkOffset, int xIndex, int zIndex) {
